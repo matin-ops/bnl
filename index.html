@@ -163,6 +163,67 @@
         background: var(--accent-dark);
       }
 
+      .contact {
+        margin-top: 48px;
+      }
+
+      .contact h2 {
+        margin-bottom: 8px;
+      }
+
+      .contact p {
+        color: var(--slate);
+        margin-bottom: 20px;
+      }
+
+      .contact-form {
+        display: grid;
+        gap: 16px;
+      }
+
+      .contact-form label {
+        display: grid;
+        gap: 8px;
+        font-weight: 500;
+        color: var(--charcoal);
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        font: inherit;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+      }
+
+      .contact-form textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+
+      .contact-form button {
+        justify-self: start;
+        border: none;
+        background: var(--accent);
+        color: #ffffff;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .contact-form button:hover,
+      .contact-form button:focus {
+        background: var(--accent-dark);
+      }
+
+      .form-status {
+        font-size: 0.95rem;
+        color: var(--slate);
+      }
+
       footer {
         margin-top: 40px;
         color: var(--slate);
@@ -262,9 +323,73 @@
         <a href="mailto:alex@operationsleader.com">Schedule a call</a>
       </section>
 
+      <section class="card contact">
+        <h2>Send a request</h2>
+        <p>
+          Share a few details and your request will go straight to Alex’s inbox.
+        </p>
+        <form class="contact-form" id="contact-form">
+          <label>
+            Name
+            <input name="name" type="text" autocomplete="name" required />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Request
+            <textarea name="request" required></textarea>
+          </label>
+          <button type="submit">Send request</button>
+          <div class="form-status" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
       <footer>
         Interim Head of Operations · alex@operationsleader.com · +44 20 7946 0832
       </footer>
     </div>
+    <script>
+      const form = document.querySelector("#contact-form");
+      const status = document.querySelector(".form-status");
+      const webhookUrl =
+        "https://mindsofcreators.app.n8n.cloud/webhook-test/4355a6a7-59f8-46e5-b157-c4062fe832d3";
+
+      if (form && status) {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          status.textContent = "Sending your request...";
+
+          const formData = new FormData(form);
+          const payload = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            request: formData.get("request"),
+          };
+
+          try {
+            const response = await fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+              throw new Error("Request failed");
+            }
+
+            form.reset();
+            status.textContent =
+              "Thanks! Your request has been sent successfully.";
+          } catch (error) {
+            status.textContent =
+              "Sorry, something went wrong. Please try again.";
+          }
+        });
+      }
+    </script>
   </body>
 </html>
