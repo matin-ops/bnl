@@ -353,9 +353,6 @@
     <script>
       const form = document.querySelector("#contact-form");
       const status = document.querySelector(".form-status");
-      const webhookUrl =
-        "https://mindsofcreators.app.n8n.cloud/webhook-test/4355a6a7-59f8-46e5-b157-c4062fe832d3";
-
       if (form && status) {
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
@@ -369,7 +366,7 @@
           };
 
           try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch("/api/contact", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
