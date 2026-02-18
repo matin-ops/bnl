@@ -329,6 +329,14 @@
           Share a few details and your request will go straight to Alex’s inbox.
         </p>
         <form class="contact-form" id="contact-form">
+          <input
+            name="website"
+            type="text"
+            autocomplete="off"
+            tabindex="-1"
+            aria-hidden="true"
+            style="position: absolute; left: -9999px; opacity: 0"
+          />
           <label>
             Name
             <input name="name" type="text" autocomplete="name" required />
@@ -341,6 +349,7 @@
             Request
             <textarea name="request" required></textarea>
           </label>
+          <input name="clientTimestamp" type="hidden" />
           <button type="submit">Send request</button>
           <div class="form-status" role="status" aria-live="polite"></div>
         </form>
@@ -353,10 +362,13 @@
     <script>
       const form = document.querySelector("#contact-form");
       const status = document.querySelector(".form-status");
-      const webhookUrl =
-        "https://mindsofcreators.app.n8n.cloud/webhook-test/4355a6a7-59f8-46e5-b157-c4062fe832d3";
 
       if (form && status) {
+        const timestampField = form.querySelector('input[name="clientTimestamp"]');
+        if (timestampField) {
+          timestampField.value = String(Date.now());
+        }
+
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
           status.textContent = "Sending your request...";
@@ -366,10 +378,12 @@
             name: formData.get("name"),
             email: formData.get("email"),
             request: formData.get("request"),
+            website: formData.get("website"),
+            clientTimestamp: formData.get("clientTimestamp"),
           };
 
           try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch("/api/contact", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
