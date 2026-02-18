@@ -46,7 +46,6 @@ const server = http.createServer((req, res) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Test: "467bA9",
           },
           body: rawBody,
         });
